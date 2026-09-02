@@ -10,7 +10,7 @@ internal static class AppMain
 
 	[STAThread]
 	private static void Main()
-	{.
+	{ 
 
 
 
