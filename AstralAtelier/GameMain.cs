@@ -1,48 +1,75 @@
-﻿// -------------------------------------------------------------------------------------------------------------------------------------------------------------
-// Author: 3dapi (https://github.com/3dapi)
-// -------------------------------------------------------------------------------------------------------------------------------------------------------------
-
 using Vortice.Mathematics;
 
-class GameMain : G2AppBase
+internal sealed class GameMain : G2AppBase
 {
-	public override System.Drawing.Size ScreenSize => GameGlobal.ScreenSize;
-	public override string GameName => GameGlobal.GameName;
+    private enum GameScene
+    {
+        Title,
+        Battle
+    }
 
-	protected override void Initialize()
-	{
-		//---------------------------------------
-		// 게임 관련 객체를 생성합니다.
-		//---------------------------------------
-	}
+    private readonly SceneTitle _titleScene = new();
+    private readonly SceneBattle _battleScene = new();
 
-	protected override void Update()
-	{
-		double elapsed = TotalTime;
+    private GameScene _currentScene = GameScene.Title;
 
-		this.ClearColor = new Color4(
-			red: (float)(Math.Sin(elapsed) * 0.5 + 0.5),
-			green: (float)(Math.Sin(elapsed + Math.PI / 2.0) * 0.5 + 0.5),
-			blue: (float)(Math.Sin(elapsed + Math.PI) * 0.5 + 0.5),
-			alpha: 1.0f);
+    public override System.Drawing.Size ScreenSize => GameGlobal.ScreenSize;
+    public override string GameName => GameGlobal.GameName;
 
-		//---------------------------------------
-		// 게임 관련 객체를 갱신합니다.
-		//---------------------------------------
-	}
+    protected override void Initialize()
+    {
+        ClearColor = new Color4(
+            red: 0.05f,
+            green: 0.05f,
+            blue: 0.1f,
+            alpha: 1.0f);
 
-	protected override void Render()
-	{
-		//---------------------------------------
-		// 게임 관련 객체를 렌더링 합니다.
-		//---------------------------------------
-	}
+        _titleScene.Initialize();
+        _battleScene.Initialize();
+    }
 
-	public override void Dispose()
-	{
-		base.Dispose();
-		//---------------------------------------
-		// 게임 관련 객체를 해제합니다.
-		//---------------------------------------
-	}
+    protected override void Update()
+    {
+        if (_currentScene == GameScene.Title)
+        {
+            TitleAction action = _titleScene.Update();
+
+            if (action == TitleAction.StartGame)
+            {
+                _currentScene = GameScene.Battle;
+            }
+            else if (action == TitleAction.ExitGame)
+            {
+                Close();
+            }
+        }
+        else if (_currentScene == GameScene.Battle)
+        {
+            bool returnToTitle = _battleScene.Update();
+
+            if (returnToTitle)
+            {
+                _currentScene = GameScene.Title;
+            }
+        }
+    }
+
+    protected override void Render()
+    {
+        if (_currentScene == GameScene.Title)
+        {
+            _titleScene.Render();
+        }
+        else if (_currentScene == GameScene.Battle)
+        {
+            _battleScene.Render();
+        }
+    }
+
+    public override void Dispose()
+    {
+        _battleScene.Dispose();
+        _titleScene.Dispose();
+        base.Dispose();
+    }
 }

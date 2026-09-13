@@ -1,10 +1,11 @@
-﻿namespace AstralAtelier
+internal static class Program
 {
-    //internal class Program
-    //{
-    //    static void Main(string[] args)
-    //    {
-    //        Console.WriteLine("Hello, World!");
-    //    }
-    //}
+    [STAThread]
+    private static void Main()
+    {
+        ApplicationConfiguration.Initialize();
+
+        using GameMain app = new();
+        app.Run();
+    }
 }
