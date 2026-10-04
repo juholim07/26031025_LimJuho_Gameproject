@@ -38,6 +38,7 @@ internal sealed class GameMain : G2AppBase
 
             if (action == TitleAction.StartGame)
             {
+                _battleScene.StartNewGame();
                 ChangeScene(GameScene.Battle);
             }
             else if (action == TitleAction.ExitGame)
@@ -52,6 +53,10 @@ internal sealed class GameMain : G2AppBase
             if (returnToTitle)
             {
                 ChangeScene(GameScene.Title);
+            }
+            else
+            {
+                _bgm.Play(_battleScene.Music);
             }
         }
     }
@@ -79,7 +84,7 @@ internal sealed class GameMain : G2AppBase
         _bgm.Play(nextScene switch
         {
             GameScene.Title => BgmTrack.Title,
-            GameScene.Battle => BgmTrack.Battle,
+            GameScene.Battle => _battleScene.Music,
             _ => throw new ArgumentOutOfRangeException(nameof(nextScene))
         });
     }

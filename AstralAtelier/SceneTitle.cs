@@ -18,6 +18,7 @@ internal sealed class SceneTitle : IDisposable
     private G2Texture? _background;
     private G2Texture? _newGameButton;
     private G2Texture? _exitButton;
+    private GameUi? _ui;
 
     public void Initialize()
     {
@@ -29,6 +30,7 @@ internal sealed class SceneTitle : IDisposable
 
         _exitButton = new G2Texture(
             "resource/ui/system/exit.png");
+        _ui = new GameUi();
     }
 
     public TitleAction Update()
@@ -71,6 +73,12 @@ internal sealed class SceneTitle : IDisposable
         _exitButton?.Draw(
             new Rect(ButtonX, ExitButtonY, ButtonWidth, ButtonHeight),
             new Rect(0, 0, 2172, 724));
+
+        _ui!.Fill(new Rect(28, 408, 596, 196), GameUi.PanelColor);
+        _ui.Heading(UiText.Get("game_title"), new Rect(48, 426, 556, 50), GameUi.Gold);
+        _ui.Text(UiText.Get("title_subtitle"), new Rect(48, 484, 556, 32));
+        _ui.Text(UiText.Get("title_hint"), new Rect(48, 530, 556, 29), GameUi.Muted);
+        _ui.Text(UiText.Get("title_goal"), new Rect(48, 567, 556, 28), GameUi.Gold);
     }
 
     private static bool IsInsideButton(
@@ -86,6 +94,7 @@ internal sealed class SceneTitle : IDisposable
 
     public void Dispose()
     {
+        _ui?.Dispose();
         _exitButton?.Dispose();
         _newGameButton?.Dispose();
         _background?.Dispose();
